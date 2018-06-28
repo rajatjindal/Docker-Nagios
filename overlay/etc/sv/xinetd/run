@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+exec /usr/sbin/xinetd -pidfile /run/xinetd.pid -stayalive -inetd_compat -inetd_ipv6

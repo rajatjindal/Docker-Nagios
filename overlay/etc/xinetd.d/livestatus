@@ -1,0 +1,16 @@
+service livestatus
+{
+    type        = UNLISTED
+    port        = 10655
+    socket_type = stream
+    protocol    = tcp
+    wait        = no
+    cps         = 1000 3
+    instances   = UNLIMITED
+    per_source  = UNLIMITED
+    flags       = NODELAY
+    user        = nagios
+    server      = /usr/local/bin/unixcat
+    server_args = /opt/nagios/var/rw/live
+    disable     = no
+}

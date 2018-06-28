@@ -20,6 +20,7 @@ ENV NG_CGI_URL             /cgi-bin
 ENV NAGIOS_BRANCH          nagios-4.3.4
 ENV NAGIOS_PLUGINS_BRANCH  release-2.2.1
 ENV NRPE_BRANCH            nrpe-3.2.1
+ENV MK_LIVESTATUS_VERSION  mk-livestatus-1.2.8p20
 
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections  && \
@@ -79,6 +80,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         snmp-mibs-downloader                \
         unzip                               \
         python                              \
+        xinetd                              \
                                                 && \
     apt-get clean && rm -Rf /var/lib/apt/lists/*
 
@@ -145,6 +147,19 @@ RUN cd /tmp                                                                  && 
     make check_nrpe                                                          && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/                                && \
     make clean
+
+RUN cd /tmp                                                                  && \
+    curl https://mathias-kettner.com/download/$MK_LIVESTATUS_VERSION.tar.gz -o mk-livestatus.tar.gz && \
+    tar zxf mk-livestatus.tar.gz                                             && \
+    rm -f mk-livestatus.tar.gz                                               && \
+    mv mk-livestatus* mk-livestatus                                          && \
+    cd mk-livestatus                                                         && \
+    ./configure                                  \
+        --with-nagios4                           \
+                                                                             && \
+    make                                                                     && \
+    make install                                                             && \
+    rm -rf /tmp/mk-livestatus
 
 RUN cd /tmp                                                          && \
     git clone https://git.code.sf.net/p/nagiosgraph/git nagiosgraph  && \
